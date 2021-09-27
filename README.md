@@ -1,2 +1,0 @@
-# pandavil
-God of movies 😎 
