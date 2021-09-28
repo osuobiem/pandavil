@@ -10,6 +10,7 @@ export default class MovieGenres extends BaseSchema {
       table.foreign('movie_id').references('movies.id').onDelete('CASCADE')
       table.integer('genre_id').unsigned()
       table.foreign('genre_id').references('genres.id').onDelete('CASCADE')
+      table.unique(['movie_id', 'genre_id'])
 
       table.timestamps()
     })
