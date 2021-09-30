@@ -1,4 +1,5 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
+import LogErrorService from 'App/Services/LogErrorService'
 
 export default class AppProvider {
   constructor (protected app: ApplicationContract) {
@@ -6,6 +7,7 @@ export default class AppProvider {
 
   public register () {
     // Register your own bindings
+    this.app.container.singleton('Pandavil/LogErrorService', ()=> new LogErrorService())
   }
 
   public async boot () {
