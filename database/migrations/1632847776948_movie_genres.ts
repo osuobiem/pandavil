@@ -6,9 +6,9 @@ export default class MovieGenres extends BaseSchema {
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('movie_id').unsigned()
+      table.integer('movie_id').unsigned().notNullable()
       table.foreign('movie_id').references('movies.id').onDelete('CASCADE')
-      table.integer('genre_id').unsigned()
+      table.integer('genre_id').unsigned().notNullable()
       table.foreign('genre_id').references('genres.id').onDelete('CASCADE')
       table.unique(['movie_id', 'genre_id'])
 
