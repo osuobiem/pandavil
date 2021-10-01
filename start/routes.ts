@@ -21,5 +21,9 @@
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.get('/', async ({ view }) => {
-  return view.render('welcome')
+  return view.render('home')
+})
+
+Route.get('/movie', async ({ view }) => {
+  return view.render('movie')
 })
