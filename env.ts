@@ -40,6 +40,4 @@ export default Env.rules({
   }),
   BULL_REDIS_PORT: Env.schema.number(),
   BULL_REDIS_PASSWORD: Env.schema.string.optional(),
-
-
 })

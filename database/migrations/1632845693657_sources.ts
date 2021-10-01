@@ -11,6 +11,7 @@ export default class Sources extends BaseSchema {
       table.text('movies_url')
       table.text('series_url')
       table.text('search_url')
+      table.boolean('status').defaultTo(false)
 
       table.timestamps()
     })
