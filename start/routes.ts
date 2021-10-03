@@ -25,21 +25,15 @@ import Logger from "@ioc:Adonis/Core/Logger";
 import Sources from "@ioc:Pandavil/SourcesService"
 
 Route.get('/', async ({ view }) => {
-  Sources.movie_info_imdb('Samurai X').then(r => {
-    console.log(r)
-  })
+  console.log(await Sources.movie_info_imdb('The Matix'))
   return view.render('home')
 })
 
 Route.get('/movie', async ({ view }) => {
   return view.render('movie')
 })
-Route.get("/job", async ({ view }) => {
-  // Dispatch Job to enter data in movie_dates table (For test purposes)
-  Bull.schedule(new Job().key, { year: "2021" }, 60 * 1000);
-  Logger.info("Job dispatched!");
-
-Route.get("/movie", async ({ view }) => {
-  return view.render("movie");
-});
+// Route.get("/job", async ({ view }) => {
+//   // Dispatch Job to enter data in movie_dates table (For test purposes)
+//   Bull.schedule(new Job().key, { year: "2021" }, 60 * 1000);
+//   Logger.info("Job dispatched!");
 Route.get("/job", "SourcesController.index");

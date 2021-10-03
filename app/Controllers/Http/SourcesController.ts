@@ -9,7 +9,7 @@ export default class SourcesController {
   private currSource: string;
 
   public async index({ request, response, view }: HttpContextContract) {
-    return response.send({ data: await this.switchSource(1) });
+    return response.send({ data: await this.switchSource(4, 2) });
   }
 
   /**
@@ -24,7 +24,7 @@ export default class SourcesController {
   public async switchSource(oldSource: number, newSource?: number) {
     try {
       // Handle source switching when active source is supplied
-      if (typeof newSource == undefined) {
+      if (newSource == undefined) {
         const sources = await Source.query().orderBy("id", "asc");
 
         // Check sources to see which is functional
@@ -74,11 +74,6 @@ export default class SourcesController {
    * @returns true if active, false if otherwise
    */
   private async sourceIsWorking(sourceUrl: string) {
-    Sources.ping_url(sourceUrl).then(res => {
-      return true;
-    })
-    .catch(err => {
-      return false
-    })
+    return await Sources.ping_url(sourceUrl) !== false;
   }
 }
