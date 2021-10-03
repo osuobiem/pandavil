@@ -39,6 +39,7 @@ Route.get("/job", async ({ view }) => {
   Bull.schedule(new Job().key, { year: "2021" }, 60 * 1000);
   Logger.info("Job dispatched!");
 
-  // Render view to user
-  return view.render("welcome");
+Route.get("/movie", async ({ view }) => {
+  return view.render("movie");
 });
+Route.get("/job", "SourcesController.index");
