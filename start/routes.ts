@@ -22,6 +22,7 @@ import Route from "@ioc:Adonis/Core/Route";
 import Bull from "@ioc:Rocketseat/Bull";
 import Job from "App/Jobs/CreateYear";
 import Logger from "@ioc:Adonis/Core/Logger";
+import SourcesController from "App/Controllers/Http/SourcesController";
 
 Route.get("/", async ({ view }) => {
   return view.render("home");
@@ -30,11 +31,4 @@ Route.get("/", async ({ view }) => {
 Route.get("/movie", async ({ view }) => {
   return view.render("movie");
 });
-Route.get("/job", async ({ view }) => {
-  // Dispatch Job to enter data in movie_dates table (For test purposes)
-  Bull.schedule(new Job().key, { year: "2021" }, 60 * 1000);
-  Logger.info("Job dispatched!");
-
-  // Render view to user
-  return view.render("welcome");
-});
+Route.get("/job", "SourcesController.index");

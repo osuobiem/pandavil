@@ -1,7 +1,20 @@
 import { DateTime } from "luxon";
-import { BaseModel, column } from "@ioc:Adonis/Lucid/Orm";
+import {
+  BaseModel,
+  column,
+  manyToMany,
+  ManyToMany,
+} from "@ioc:Adonis/Lucid/Orm";
+import Movie from "App/Models/Movie";
 
 export default class Genre extends BaseModel {
+  // Relationships
+  @manyToMany(() => Movie, {
+    pivotTable: "movie_genre",
+  })
+  public movies: ManyToMany<typeof Movie>;
+
+  // Columns
   @column({ isPrimary: true })
   public id: number;
 
