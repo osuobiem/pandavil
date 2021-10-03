@@ -1,11 +1,10 @@
 import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Source from "App/Models/Source";
+import Movie from "App/Models/Movie";
 import { logger } from "Config/app";
 import Logger from "@ioc:Adonis/Core/Logger";
 
 export default class SourcesController {
-  private currSource: string;
-
   public async index({ request, response, view }: HttpContextContract) {
     return response.send({ data: await this.switchSource(1) });
   }
@@ -45,10 +44,10 @@ export default class SourcesController {
         this.switch(failedSource, manualSource);
       }
 
-      return "true";
+      return true;
     } catch (error) {
       Logger.error(error);
-      return "false";
+      return false;
     }
   }
 
@@ -69,7 +68,22 @@ export default class SourcesController {
     await newSource.save();
   }
 
+  public async updateMovieSource(newSource: Source) {
+    const movies = await Movie.query()
+      .where("source_id", newSource["id"])
+      .orderBy("movie_id", "asc");
+  }
+
+  /**
+   * Checks if a source is working or not
+   * @param sourceId
+   * @returns boolean
+   */
   private sourceIsWorking(sourceId: number) {
+    return true;
+  }
+
+  private checkIfSourceHasMovie(movieTitle: string) {
     return true;
   }
 }
