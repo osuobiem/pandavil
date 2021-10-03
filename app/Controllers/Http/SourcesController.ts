@@ -1,12 +1,15 @@
 import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Source from "App/Models/Source";
-import Movie from "App/Models/Movie";
 import { logger } from "Config/app";
 import Logger from "@ioc:Adonis/Core/Logger";
 
+import Sources from "@ioc:Pandavil/SourcesService";
+
 export default class SourcesController {
+  private currSource: string;
+
   public async index({ request, response, view }: HttpContextContract) {
-    return response.send({ data: await this.switchSource(1) });
+    return response.send({ data: await this.switchSource(4, 2) });
   }
 
   /**
@@ -14,14 +17,14 @@ export default class SourcesController {
    * failedSource param being the old/previous source and manualSource
    * being the source which the admin intends to change to
    *
-   * @param failedSource
-   * @param manualSource
+   * @param oldSource
+   * @param newSource
    * @returns boolean
    */
-  public async switchSource(failedSource?: number, manualSource?: number) {
+  public async switchSource(oldSource: number, newSource?: number) {
     try {
       // Handle source switching when active source is supplied
-      if (typeof failedSource != undefined) {
+      if (newSource == undefined) {
         const sources = await Source.query().orderBy("id", "asc");
 
         // Check sources to see which is functional
@@ -29,11 +32,11 @@ export default class SourcesController {
           let workingSource: number = sources[i]["id"];
 
           if (
-            sources[i]["id"] != failedSource &&
-            this.sourceIsWorking(workingSource)
+            sources[i]["id"] != oldSource &&
+            (await this.sourceIsWorking(sources[i]["url"]))
           ) {
             // Method call to change source
-            this.switch(failedSource, workingSource);
+            this.switch(oldSource, workingSource);
 
             // Break loop
             break;
@@ -41,7 +44,7 @@ export default class SourcesController {
         }
       } else {
         // Method call to change source based on admin request
-        this.switch(failedSource, manualSource);
+        this.switch(oldSource, newSource);
       }
 
       return true;
@@ -53,37 +56,27 @@ export default class SourcesController {
 
   /**
    * Implement database update
-   * @param failedSource
-   * @param workingSource
+   * @param oldSource
+   * @param newSource
    */
-  private async switch(failedSource?: number, workingSource?: number) {
+  private async switch(oldSource: number, newSource: number) {
     // Deactivate old source
-    const oldSource = await Source.findOrFail(failedSource);
-    oldSource.status = 0;
-    await oldSource.save();
+    const oldSrc = await Source.findOrFail(oldSource);
+    oldSrc.status = 0;
+    await oldSrc.save();
 
     // Activate new source
-    const newSource = await Source.findOrFail(workingSource);
-    newSource.status = 1;
-    await newSource.save();
-  }
-
-  public async updateMovieSource(newSource: Source) {
-    const movies = await Movie.query()
-      .where("source_id", newSource["id"])
-      .orderBy("movie_id", "asc");
+    const newSrc = await Source.findOrFail(newSource);
+    newSrc.status = 1;
+    await newSrc.save();
   }
 
   /**
-   * Checks if a source is working or not
-   * @param sourceId
-   * @returns boolean
+   * Check if source is active
+   * @param sourceUrl Source URL
+   * @returns true if active, false if otherwise
    */
-  private sourceIsWorking(sourceId: number) {
-    return true;
-  }
-
-  private checkIfSourceHasMovie(movieTitle: string) {
-    return true;
+  private async sourceIsWorking(sourceUrl: string) {
+    return (await Sources.ping_url(sourceUrl)) !== false;
   }
 }

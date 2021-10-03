@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import BaseSeeder from "@ioc:Adonis/Lucid/Seeder";
 
 export default class MovieSeeder extends BaseSeeder {
@@ -35,5 +36,12 @@ export default class MovieSeeder extends BaseSeeder {
         status: 0,
       },
     ]);
+=======
+import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
+
+export default class MovieSeeder extends BaseSeeder {
+  public async run () {
+    // Write your database queries inside the run method
+>>>>>>> 4b2ddd7f2835b3293f3e1588afd0c1a7594561c6
   }
 }
