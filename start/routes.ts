@@ -22,8 +22,12 @@ import Route from "@ioc:Adonis/Core/Route";
 import Bull from "@ioc:Rocketseat/Bull";
 import Job from "App/Jobs/CreateYear";
 import Logger from "@ioc:Adonis/Core/Logger";
+import Sources from "@ioc:Pandavil/SourcesService"
 
 Route.get('/', async ({ view }) => {
+  Sources.movie_info_imdb('Samurai X').then(r => {
+    console.log(r)
+  })
   return view.render('home')
 })
 
