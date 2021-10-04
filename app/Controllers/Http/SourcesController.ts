@@ -1,15 +1,14 @@
 import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Source from "App/Models/Source";
+import Movie from "App/Models/Movie";
 import { logger } from "Config/app";
 import Logger from "@ioc:Adonis/Core/Logger";
 
-import Sources from "@ioc:Pandavil/SourcesService"
+import Sources from "@ioc:Pandavil/SourcesService";
 
 export default class SourcesController {
-  private currSource: string;
-
   public async index({ request, response, view }: HttpContextContract) {
-    return response.send({ data: await this.switchSource(4, 2) });
+    return response.send({ data: await this.switchSource(1) });
   }
 
   /**
@@ -31,7 +30,10 @@ export default class SourcesController {
         for (const i in sources) {
           let workingSource: number = sources[i]["id"];
 
-          if(sources[i]["id"] != oldSource && await this.sourceIsWorking(sources[i]['url'])) {
+          if (
+            sources[i]["id"] != oldSource &&
+            (await this.sourceIsWorking(sources[i]["url"]))
+          ) {
             // Method call to change source
             this.switch(oldSource, workingSource);
 
@@ -53,6 +55,7 @@ export default class SourcesController {
 
   /**
    * Implement database update
+   *
    * @param oldSource
    * @param newSource
    */
@@ -70,10 +73,62 @@ export default class SourcesController {
 
   /**
    * Check if source is active
+   *
    * @param sourceUrl Source URL
    * @returns true if active, false if otherwise
    */
   private async sourceIsWorking(sourceUrl: string) {
-    return await Sources.ping_url(sourceUrl) !== false;
+    return (await Sources.ping_url(sourceUrl)) !== false;
+  }
+
+  /**
+   * Update necessary information about movies of failed source.
+   *
+   * @param oldSource
+   * @param newSource
+   */
+  public async updateFailedSourceMovie(oldSource: number, newSource: Source) {
+    try {
+      // Fetch old source movies
+      const movies = await Movie.query()
+        .where("source_id", oldSource)
+        .orderBy("id", "asc");
+
+      // Loop through movies of failed source and update their source details
+      for (const i in movies) {
+        // Check if the source has this movie and then update the movie's source data
+        if (
+          await this.checkIfSourceHasMovie(movies[i]["title"], newSource.url)
+        ) {
+          await Movie.query()
+            .where("id", movies[i]["id"])
+            .update({ source_id: newSource.id });
+        } else {
+          // Look for another source that has the movie
+          const sources = await Source.all();
+
+          for (const j in sources) {
+            if (
+              sources[j]["id"] != newSource.id &&
+              (await this.checkIfSourceHasMovie(
+                movies[i]["title"],
+                sources[j]["url"]
+              ))
+            ) {
+              await Movie.query().where("id", movies[i]["id"]).update({
+                source_id: sources[j]["id"],
+              });
+              break;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      Logger.error(error);
+    }
+  }
+
+  private async checkIfSourceHasMovie(movieTitle: string, sourceUrl: string) {
+    return false;
   }
 }
