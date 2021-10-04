@@ -1,3 +1,7 @@
 node_modules
 .env
+<<<<<<< HEAD
 app.log
+=======
+app.log
+>>>>>>> cf6d5390dbb397de84835257225e2f30572d9c1b
