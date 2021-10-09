@@ -8,7 +8,7 @@ import Sources from "@ioc:Pandavil/SourcesService";
 
 export default class SourcesController {
   public async index({ request, response, view }: HttpContextContract) {
-    return response.send({ data: await this.switchSource(1) });
+    return response.send({ data: await this.autoSourceChecker() });
   }
 
   /**
@@ -36,6 +36,9 @@ export default class SourcesController {
           ) {
             // Method call to change source
             this.switch(oldSource, workingSource);
+
+            // Update movies of failed source
+            this.updateFailedSourceMovie(oldSource, sources[i]);
 
             // Break loop
             break;
@@ -77,7 +80,7 @@ export default class SourcesController {
    * @param sourceUrl Source URL
    * @returns true if active, false if otherwise
    */
-  private async sourceIsWorking(sourceUrl: string) {
+  public async sourceIsWorking(sourceUrl: string) {
     return (await Sources.ping_url(sourceUrl)) !== false;
   }
 
@@ -108,6 +111,7 @@ export default class SourcesController {
           const sources = await Source.all();
 
           for (const j in sources) {
+            // Change movie source details if the movie exists in the source else deactivate the movie
             if (
               sources[j]["id"] != newSource.id &&
               (await this.checkIfSourceHasMovie(
@@ -119,6 +123,10 @@ export default class SourcesController {
                 source_id: sources[j]["id"],
               });
               break;
+            } else {
+              await Movie.query()
+                .where("id", movies[i]["id"])
+                .update({ status: 0 });
             }
           }
         }
@@ -130,5 +138,41 @@ export default class SourcesController {
 
   private async checkIfSourceHasMovie(movieTitle: string, sourceUrl: string) {
     return false;
+  }
+
+  /**
+   * Automatically check all movie sources to ensure functionality
+   */
+  public async autoSourceChecker() {
+    try {
+      const sources = await Source.query().orderBy("id", "asc");
+
+      for (const i in sources) {
+        if (
+          !(await this.sourceIsWorking(sources[i]["url"])) &&
+          sources[i]["status"] == 1
+        ) {
+          // Switch and update source and its movies if source is not working
+          await this.switchSource(sources[i]["id"]);
+        } else if (
+          !(await this.sourceIsWorking(sources[i]["url"])) &&
+          sources[i]["status"] == 0
+        ) {
+          // Check for source that works and pass to method that updates failed source movies
+          for (const j in sources) {
+            if (
+              sources[j]["id"] != sources[i]["id"] &&
+              (await this.sourceIsWorking(sources[j]["url"]))
+            ) {
+              await this.updateFailedSourceMovie(sources[i]["id"], sources[j]);
+            }
+          }
+        }
+      }
+      return true;
+    } catch (error) {
+      Logger.error(error);
+      return false;
+    }
   }
 }
