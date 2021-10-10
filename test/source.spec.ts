@@ -3,6 +3,7 @@ import SourcesController from "App/Controllers/Http/SourcesController";
 import Movie from "App/Models/Movie";
 import Source from "App/Models/Source";
 import { data } from "cheerio/lib/api/attributes";
+import { logger } from "Config/app";
 
 test.group("Source", () => {
   test("Can Switch Source", async (assert) => {
@@ -15,11 +16,16 @@ test.group("Source", () => {
     //     return data;
     //   });
 
-    const res = await new SourcesController()
-      .autoSourceChecker()
-      .then((data) => {
-        return data;
-      });
+    // const res = await new SourcesController()
+    //   .autoSourceChecker()
+    //   .then((data) => {
+    //     return data;
+    //   });
+
+    // console.log(res);
+
+    // Dispatch autoChecker Job
+    const res = await new SourcesController().dispatchAutoSourceChecker();
 
     console.log(res);
 

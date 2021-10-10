@@ -3,12 +3,32 @@ import Source from "App/Models/Source";
 import Movie from "App/Models/Movie";
 import { logger } from "Config/app";
 import Logger from "@ioc:Adonis/Core/Logger";
+import Bull from "@ioc:Rocketseat/Bull";
+import AutoSourceChecker from "App/Jobs/AutoSourceChecker";
 
 import Sources from "@ioc:Pandavil/SourcesService";
 
 export default class SourcesController {
   public async index({ request, response, view }: HttpContextContract) {
-    return response.send({ data: await this.autoSourceChecker() });
+    // return response.send({ data: await this.autoSourceChecker() });
+  }
+
+  /**
+   * Dispatches the job that checks movie sources every day at 2:00 AM and updates them accordingly
+   */
+  public async dispatchAutoSourceChecker() {
+    try {
+      // Dispatch Job that should be executed everyday at (2:00 AM)
+      await Bull.add(new AutoSourceChecker().key, null, {
+        repeat: {
+          cron: "00 2 * * *", // 2:00 AM daily
+        },
+      });
+
+      Logger.info("Job dispatched");
+    } catch (error) {
+      Logger.error(error);
+    }
   }
 
   /**
@@ -169,10 +189,10 @@ export default class SourcesController {
           }
         }
       }
-      return true;
+      return "true";
     } catch (error) {
       Logger.error(error);
-      return false;
+      return "false";
     }
   }
 }
