@@ -4,6 +4,9 @@ import Movie from "App/Models/Movie";
 import Source from "App/Models/Source";
 import { data } from "cheerio/lib/api/attributes";
 import { logger } from "Config/app";
+import LoggerService from "@ioc:Pandavil/LoggerService";
+import Database from "@ioc:Adonis/Lucid/Database";
+import Log from "App/Models/Log";
 
 test.group("Source", () => {
   test("Can Switch Source", async (assert) => {
@@ -25,9 +28,12 @@ test.group("Source", () => {
     // console.log(res);
 
     // Dispatch autoChecker Job
-    const res = await new SourcesController().dispatchAutoSourceChecker();
-
-    console.log(res);
+    // const res = await new SourcesController().dispatchAutoSourceChecker();
+    try {
+      await Source.get();
+    } catch (error) {
+      await LoggerService.error("Source error", error, new Log());
+    }
 
     // assert.typeOf(res, "array");
   });
