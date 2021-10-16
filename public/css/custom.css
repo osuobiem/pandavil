@@ -1,0 +1,82 @@
+.card__title {
+    white-space: unset;
+}
+
+.pagination-link {
+    padding: 9px 15px;
+    background: white;
+    border-radius: 10px;
+    font-size: 16px;
+    margin: 0 2px;
+    display: inline-block;
+}
+
+.pagination-link:hover {
+    background: #007bff;
+    color: white;
+}
+
+.pagination-link.active {
+    background: #007bff;
+    color: white;
+}
+
+#pagination-div {
+    text-align: center;
+}
+
+.section--gradient:after {
+    background: transparent !important;
+}
+
+@media(min-width: 1200px) {
+    .section--details-bg {
+        margin-top: 0 !important;
+    }
+}
+
+@media(min-width: 1024px) {
+    .section__bg {
+        height: 650px !important;
+    }
+
+    .section--details-bg {
+        padding-bottom: 200px;
+    }
+}
+
+@media(max-width: 412px) {
+    .section--details-bg {
+        padding-top: 40%;
+        padding-bottom: 10%;
+    }
+
+    .footer__content {
+        text-align: center;
+    }
+
+    .footer__social {
+        justify-content: center;
+    }
+}
+
+.footer__content {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: unset !important;
+}
+
+.download-btn {
+    padding: 10px;
+    background: transparent;
+    color: #2f80ed;
+    border-radius: 10px;
+    border: solid 1px #2f80ed;
+    font-size: 14px;
+    transition: all .4s linear;
+}
+
+.download-btn:hover {
+    background: #2f80ed;
+    color: white;
+}

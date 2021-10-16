@@ -22,7 +22,19 @@ export default class SourcesService implements SourcesInterface {
 	 * @returns string
 	 */
 	public clean_string(string_to_clean: string) {
-		return string_to_clean.toLowerCase().replace("'", "").replace("’", "").replace("/", "").replace('"', "");
+		return string_to_clean.toLowerCase()
+		.replace("'", "").replace("’", "")
+		.replace("/", "").replace('"', "")
+		.replace("*", "").replace(':', "")
+		.replace("!", "").replace('#', "")
+		.replace("%", "").replace('&', "")
+		.replace("@", "").replace(';', "")
+		.replace("@", "").replace(';', "")
+		.replace(",", "").replace('.', "")
+		.replace(",", "").replace('.', "")
+		.replace("(", "").replace(')', "")
+		.replace("=", "").replace('~', "")
+		.replace(">", "").replace('<', "");
 	}
 
 	/**
@@ -211,20 +223,23 @@ export default class SourcesService implements SourcesInterface {
 
 							movie_info.title = title;
 
-							movie_info.movieSlug = this.clean_string(title.split(" (")[0]).split(' ').join('-');
+							let movie_slug = this.clean_string(title.split(" (")[0]).split(' ').join('-');
 
 							movie_info.sourceId = source.id;
 
-							db_movie = await Movie.findBy('movie_slug', movie_info.movieSlug);
+							db_movie = await Movie.findBy('movie_slug', movie_slug);
 
-							if (!db_movie) {
-								movie_list.push(movie_info);
-							}
+							if (db_movie) movie_info.movieSlug = movie_slug + '-1';
+
+							movie_list.push(movie_info);
 						}
 					}
 				}
 
 				if (parseInt(i) + 1 == movies.length) break;
+			}
+			else {
+				break;
 			}
 		}
 
