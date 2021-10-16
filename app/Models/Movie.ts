@@ -13,16 +13,16 @@ import Genre from "App/Models/Genre";
 
 export default class Movie extends BaseModel {
   // Relationships
-  @belongsTo(() => MovieYear)
-  public movieYears: BelongsTo<typeof MovieYear>;
+  // @belongsTo(() => MovieYear)
+  // public movieYears: BelongsTo<typeof MovieYear>;
 
   @belongsTo(() => Source)
   public sources: BelongsTo<typeof Source>;
 
-  @manyToMany(() => Genre, {
-    pivotTable: "movie_genre",
-  })
-  public genres: ManyToMany<typeof Genre>;
+  // @manyToMany(() => Genre, {
+  //   pivotTable: "movie_genre",
+  // })
+  // public genres: ManyToMany<typeof Genre>;
 
   // Columns
   @column({ isPrimary: true })
@@ -35,13 +35,13 @@ export default class Movie extends BaseModel {
   public rating: string;
 
   @column()
-  public yearId: number;
+  public year: string;
 
   @column()
   public duration: string;
 
   @column()
-  public userDiscretion: string;
+  public genres: any;
 
   @column()
   public trailerUrl: string;
@@ -54,6 +54,9 @@ export default class Movie extends BaseModel {
 
   @column()
   public imageUrl: string;
+
+  @column()
+  public bannerUrl: string;
 
   @column()
   public status: number;

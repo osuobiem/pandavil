@@ -27,6 +27,9 @@ export default class Source extends BaseModel {
   public searchUrl: string;
 
   @column()
+  public methodName: string;
+
+  @column()
   public status: number;
 
   @column.dateTime({ autoCreate: true })
