@@ -5,6 +5,9 @@ import { logger } from "Config/app";
 import Logger from "@ioc:Adonis/Core/Logger";
 import Bull from "@ioc:Rocketseat/Bull";
 import AutoSourceChecker from "App/Jobs/AutoSourceChecker";
+import MovieUpdate from "App/Jobs/MovieUpdate";
+import LoggerService from "@ioc:Pandavil/LoggerService";
+import Log from "App/Models/Log";
 
 import Sources from "@ioc:Pandavil/SourcesService";
 
@@ -25,9 +28,41 @@ export default class SourcesController {
         },
       });
 
-      Logger.info("Job dispatched");
+      await LoggerService.info(
+        "Job info",
+        "AutoSourceChecker Job dispatched",
+        new Log()
+      );
     } catch (error) {
-      Logger.error(error);
+      await LoggerService.error("Job error", error, new Log());
+    }
+  }
+
+  /**
+   * Dispatches the job that updates movies on the platform
+   */
+  public async dispatchMovieUpdate() {
+    try {
+      const activeSource = await Source.findByOrFail("status", 1);
+
+      // Dispatch Job that should be executed every 30 min
+      await Bull.add(
+        new MovieUpdate().key,
+        { activeSource },
+        {
+          repeat: {
+            cron: "*/30 * * * *", // 2:00 AM daily
+          },
+        }
+      );
+
+      await LoggerService.info(
+        "Job info",
+        "MovieUpdate Job dispatched",
+        new Log()
+      );
+    } catch (error) {
+      await LoggerService.error("Job error", error, new Log());
     }
   }
 

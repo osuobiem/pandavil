@@ -30,7 +30,7 @@ test.group("Source", () => {
     // Dispatch autoChecker Job
     // const res = await new SourcesController().dispatchAutoSourceChecker();
     try {
-      await Source.get();
+      await new SourcesController().dispatchMovieUpdate();
     } catch (error) {
       await LoggerService.error("Source error", error, new Log());
     }

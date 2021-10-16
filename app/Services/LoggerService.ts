@@ -18,4 +18,21 @@ export default class LoggerService implements LoggerInterface {
     // Output to log file
     Logger.error(error);
   }
+
+  /**
+   * Add logged information(info) to the database
+   * @param title
+   * @param error
+   */
+  public async info(title, info, logModel) {
+    // Update logs table
+    const log = logModel;
+    log.title = title;
+    log.message = info;
+    log.type = "info";
+    await log.save();
+
+    // Output to log file
+    Logger.error(info);
+  }
 }

@@ -32,8 +32,7 @@ Route.get("/", async ({ view }) => {
 Route.get("/movie", async ({ view }) => {
   return view.render("movie");
 });
-// Route.get("/job", async ({ view }) => {
-//   // Dispatch Job to enter data in movie_dates table (For test purposes)
-//   Bull.schedule(new Job().key, { year: "2021" }, 60 * 1000);
-//   Logger.info("Job dispatched!");
+
 Route.get("/job", "SourcesController.index");
+
+Route.get("/movie-update", "SourcesController.dispatchMovieUpdate");
