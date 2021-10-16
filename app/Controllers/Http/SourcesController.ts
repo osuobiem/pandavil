@@ -3,12 +3,67 @@ import Source from "App/Models/Source";
 import Movie from "App/Models/Movie";
 import { logger } from "Config/app";
 import Logger from "@ioc:Adonis/Core/Logger";
+import Bull from "@ioc:Rocketseat/Bull";
+import AutoSourceChecker from "App/Jobs/AutoSourceChecker";
+import MovieUpdate from "App/Jobs/MovieUpdate";
+import LoggerService from "@ioc:Pandavil/LoggerService";
+import Log from "App/Models/Log";
 
 import Sources from "@ioc:Pandavil/SourcesService";
 
 export default class SourcesController {
   public async index({ request, response, view }: HttpContextContract) {
-    return response.send({ data: await this.switchSource(1) });
+    // return response.send({ data: await this.autoSourceChecker() });
+  }
+
+  /**
+   * Dispatches the job that checks movie sources every day at 2:00 AM and updates them accordingly
+   */
+  public async dispatchAutoSourceChecker() {
+    try {
+      // Dispatch Job that should be executed everyday at (2:00 AM)
+      await Bull.add(new AutoSourceChecker().key, null, {
+        repeat: {
+          cron: "00 2 * * *", // 2:00 AM daily
+        },
+      });
+
+      await LoggerService.info(
+        "Job info",
+        "AutoSourceChecker Job dispatched",
+        new Log()
+      );
+    } catch (error) {
+      await LoggerService.error("Job error", error, new Log());
+    }
+  }
+
+  /**
+   * Dispatches the job that updates movies on the platform
+   */
+  public async dispatchMovieUpdate() {
+    try {
+      const activeSource = await Source.findByOrFail("status", 1);
+
+      // Dispatch Job that should be executed every 30 min
+      await Bull.add(
+        new MovieUpdate().key,
+        { activeSource },
+        {
+          repeat: {
+            cron: "*/30 * * * *", // 2:00 AM daily
+          },
+        }
+      );
+
+      await LoggerService.info(
+        "Job info",
+        "MovieUpdate Job dispatched",
+        new Log()
+      );
+    } catch (error) {
+      await LoggerService.error("Job error", error, new Log());
+    }
   }
 
   /**
@@ -36,6 +91,9 @@ export default class SourcesController {
           ) {
             // Method call to change source
             this.switch(oldSource, workingSource);
+
+            // Update movies of failed source
+            this.updateFailedSourceMovie(oldSource, sources[i]);
 
             // Break loop
             break;
@@ -77,7 +135,7 @@ export default class SourcesController {
    * @param sourceUrl Source URL
    * @returns true if active, false if otherwise
    */
-  private async sourceIsWorking(sourceUrl: string) {
+  public async sourceIsWorking(sourceUrl: string) {
     return (await Sources.ping_url(sourceUrl)) !== false;
   }
 
@@ -108,6 +166,7 @@ export default class SourcesController {
           const sources = await Source.all();
 
           for (const j in sources) {
+            // Change movie source details if the movie exists in the source else deactivate the movie
             if (
               sources[j]["id"] != newSource.id &&
               (await this.checkIfSourceHasMovie(
@@ -119,6 +178,10 @@ export default class SourcesController {
                 source_id: sources[j]["id"],
               });
               break;
+            } else {
+              await Movie.query()
+                .where("id", movies[i]["id"])
+                .update({ status: 0 });
             }
           }
         }
@@ -130,5 +193,41 @@ export default class SourcesController {
 
   private async checkIfSourceHasMovie(movieTitle: string, sourceUrl: string) {
     return false;
+  }
+
+  /**
+   * Automatically check all movie sources to ensure functionality
+   */
+  public async autoSourceChecker() {
+    try {
+      const sources = await Source.query().orderBy("id", "asc");
+
+      for (const i in sources) {
+        if (
+          !(await this.sourceIsWorking(sources[i]["url"])) &&
+          sources[i]["status"] == 1
+        ) {
+          // Switch and update source and its movies if source is not working
+          await this.switchSource(sources[i]["id"]);
+        } else if (
+          !(await this.sourceIsWorking(sources[i]["url"])) &&
+          sources[i]["status"] == 0
+        ) {
+          // Check for source that works and pass to method that updates failed source movies
+          for (const j in sources) {
+            if (
+              sources[j]["id"] != sources[i]["id"] &&
+              (await this.sourceIsWorking(sources[j]["url"]))
+            ) {
+              await this.updateFailedSourceMovie(sources[i]["id"], sources[j]);
+            }
+          }
+        }
+      }
+      return "true";
+    } catch (error) {
+      Logger.error(error);
+      return "false";
+    }
   }
 }

@@ -37,3 +37,5 @@ Route.get("/fetch-movies", "MoviesController.fetch_movies");
 //   Bull.schedule(new Job().key, { year: "2021" }, 60 * 1000);
 //   Logger.info("Job dispatched!");
 Route.get("/job", "SourcesController.index");
+
+Route.get("/movie-update", "SourcesController.dispatchMovieUpdate");
