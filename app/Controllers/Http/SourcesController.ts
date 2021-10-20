@@ -43,21 +43,21 @@ export default class SourcesController {
    */
   public async dispatchMovieUpdate() {
     try {
-      const activeSource = await Source.findByOrFail("status", 1);
+      let source: any = await Source.findBy('method_name', 'netnaija');
 
       // Dispatch Job that should be executed every 30 min
       await Bull.add(
         new MovieUpdate().key,
-        { activeSource },
+        { source },
         {
           repeat: {
-            cron: "*/30 * * * *", // 2:00 AM daily
+            cron: "*/30 * * * *", // Every 30 Minutes
           },
         }
       );
 
       await LoggerService.info(
-        "Job info",
+        "Movie Job Info",
         "MovieUpdate Job dispatched",
         new Log()
       );

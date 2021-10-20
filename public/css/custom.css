@@ -29,9 +29,22 @@
     background: transparent !important;
 }
 
+.header__content {
+    padding: 0;
+}
+
+.header__actions {
+    width: 100%;
+    justify-content: right;
+}
+
 @media(min-width: 1200px) {
     .section--details-bg {
         margin-top: 0 !important;
+    }
+
+    .header__form {
+        width: 40%;
     }
 }
 
@@ -79,4 +92,104 @@
 .download-btn:hover {
     background: #2f80ed;
     color: white;
+}
+
+.catalog__nav {
+    justify-content: center;
+    align-items: center;
+    margin-top: -45px;
+    padding: 10px 20px;
+}
+
+.catalog__nav h3 {
+    color: white;
+    margin: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.catalog__nav span {
+    display: block;
+    color: #2f7fec;
+    font-size: 18px;
+    font-weight: 500;
+    z-index: 2;
+    margin-left: 10px;
+}
+
+.header__form-btn {
+    border-bottom-right-radius: 16px;
+    border-top-right-radius: 16px;
+    background: #2f7fec;
+    width: 40px;
+    height: 40px;
+    right: 0px;
+}
+
+.header__form-btn:hover {
+    cursor: pointer;
+}
+
+.header__form-btn svg {
+    fill: white;
+}
+
+.logo-text {
+    font-family: 'Satisfy', cursive;
+    font-size: 40px;
+    font-weight: 700;
+}
+
+.logo-text a {
+    color: #2f7fec;
+}
+
+.logo-text a>span {
+    color: white;
+}
+
+@media(max-width: 1199px) {
+    .catalog__nav {
+        margin-top: 50px;
+    }
+
+    .header__search {
+        margin: 0;
+    }
+
+    .header__form-btn {
+        right: 40px;
+    }
+
+    .logo-text {
+        font-size: 27px;
+    }
+
+    .header__actions {
+        width: 0%;
+    }
+
+    .header__logo img {
+        width: 60%;
+    }
+
+    .catalog__nav span {
+        margin-left: 0;
+    }
+}
+
+.header__logo {
+    margin: 0;
+    position: absolute;
+    left: 45%;
+}
+
+.no-result {
+    width: 100%;
+    text-align: center;
+}
+
+.no-result h4 {
+    color: white;
+    padding: 50px;
 }

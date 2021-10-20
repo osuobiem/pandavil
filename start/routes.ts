@@ -25,13 +25,18 @@ import Logger from "@ioc:Adonis/Core/Logger";
 import Sources from "@ioc:Pandavil/SourcesService";
 import Source from "App/Models/Source";
 
+// Home Page
 Route.get("/", "ViewController.home");
 
+// Search Movie
+Route.get("/search", "MoviesController.search");
+
+// Single Movie Page
 Route.get("/movie/:slug", "ViewController.movie");
 
+// Get download URL from Sabishare API
 Route.get("/get-download-url", "MoviesController.get_download_link");
 
-Route.get("/fetch-movies", "MoviesController.fetch_movies");
 // Route.get("/job", async ({ view }) => {
 //   // Dispatch Job to enter data in movie_dates table (For test purposes)
 //   Bull.schedule(new Job().key, { year: "2021" }, 60 * 1000);

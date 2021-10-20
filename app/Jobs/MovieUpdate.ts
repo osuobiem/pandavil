@@ -1,4 +1,8 @@
+import LoggerService from '@ioc:Pandavil/LoggerService';
+import SourcesService from '@ioc:Pandavil/SourcesService';
 import { JobContract } from '@ioc:Rocketseat/Bull'
+import Log from 'App/Models/Log';
+import Movie from 'App/Models/Movie';
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +20,18 @@ export default class MovieUpdate implements JobContract {
   public key = 'MovieUpdate'
 
   public async handle(job) {
-    const { data } = job
-    // Do somethign with you job data
+    try {
+      let { data } = job
+      
+      await Movie.createMany(await SourcesService.netnaija(data.source, Movie));
+
+      await LoggerService.info(
+        "MovieUpdate Job Run",
+        "Movie Update Successful",
+        new Log()
+      );
+    } catch (error) {
+      await LoggerService.error("MovieUpdate Job Error", error, new Log());
+    }
   }
 }

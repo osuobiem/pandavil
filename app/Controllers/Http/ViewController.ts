@@ -8,7 +8,7 @@ export default class ViewController {
      */
     public async home({request, view}: HttpContextContract) {
         const page = request.input('page', 1)
-        const movies = await Movie.query().paginate(page, 18);
+        const movies = await Movie.query().orderBy('id', 'desc').paginate(page, 18);
 
         movies.baseUrl('/');
 

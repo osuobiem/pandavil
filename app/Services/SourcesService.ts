@@ -166,8 +166,7 @@ export default class SourcesService implements SourcesInterface {
 	 * @returns list of movies
 	 */
 	public async netnaija(source, Movie) {
-
-		const url: string = source.moviesUrl;
+		const url: string = source.movies_url;
 		const res: any = await this.ping_url(url);
 
 		let movie_list: any = [];
@@ -182,9 +181,9 @@ export default class SourcesService implements SourcesInterface {
 			let movie = movies[i];
 			let title = $(movie).find("a").text();
 
-			let db_movie = await Movie.findBy('title', title);
+			let db_movie = await (await Movie.query().where('title', title)).length;
 
-			if (!db_movie) {
+			if (db_movie < 1) {
 				// Get movie info
 				let movie_info: any = await this.movie_info_imdb(title.split(" (")[0]);
 
@@ -227,11 +226,16 @@ export default class SourcesService implements SourcesInterface {
 
 							movie_info.sourceId = source.id;
 
-							db_movie = await Movie.findBy('movie_slug', movie_slug);
+							db_movie = await (await Movie.query().where('movie_slug', movie_slug)).length;
 
-							if (db_movie) movie_info.movieSlug = movie_slug + '-1';
+							if (db_movie > 0) {
+								movie_info.movieSlug = movie_slug + '-1';
+							}
+							else {
+								movie_info.movieSlug = movie_slug;
+							}
 
-							movie_list.push(movie_info);
+							movie_list = [movie_info, ...movie_list];
 						}
 					}
 				}
