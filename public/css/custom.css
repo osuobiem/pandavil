@@ -35,7 +35,7 @@
 
 .header__actions {
     width: 100%;
-    justify-content: right;
+    justify-content: flex-end;
 }
 
 @media(min-width: 1200px) {
@@ -146,6 +146,11 @@
 
 .logo-text a>span {
     color: white;
+}
+
+.header__search span {
+    color: #2f7fec;
+    font-size: 18px;
 }
 
 @media(max-width: 1199px) {
