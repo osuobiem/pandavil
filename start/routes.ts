@@ -37,10 +37,12 @@ Route.get("/movie/:slug", "ViewController.movie");
 // Get download URL from Sabishare API
 Route.get("/get-download-url", "MoviesController.get_download_link");
 
-// Route.get("/job", async ({ view }) => {
-//   // Dispatch Job to enter data in movie_dates table (For test purposes)
-//   Bull.schedule(new Job().key, { year: "2021" }, 60 * 1000);
-//   Logger.info("Job dispatched!");
+// Fetch movies by category (Genre or Year)
+Route.get("/filter", "MoviesController.filter");
+
+// Handle movie genre
+Route.get("manage-genre", "SourcesController.manageGenres");
+
 Route.get("/job", "SourcesController.index");
 
 Route.get("/movie-update", "SourcesController.dispatchMovieUpdate");

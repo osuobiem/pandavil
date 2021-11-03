@@ -19,10 +19,10 @@ export default class Movie extends BaseModel {
   @belongsTo(() => Source)
   public sources: BelongsTo<typeof Source>;
 
-  // @manyToMany(() => Genre, {
-  //   pivotTable: "movie_genre",
-  // })
-  // public genres: ManyToMany<typeof Genre>;
+  @manyToMany(() => Genre, {
+    pivotTable: "movie_genres",
+  })
+  public genres: ManyToMany<typeof Genre>;
 
   // Columns
   @column({ isPrimary: true })

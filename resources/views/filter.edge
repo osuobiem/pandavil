@@ -174,8 +174,8 @@
                                   <option value="7">2010-20</option>
                                   <option value="8">2021</option>
                               </select>
+                              <!--<h3>Latest Movies 😎</h3>-->
                           </div>
-                          <!--<h3>Latest Movies 😎</h3>-->
                     </div>
 
                     <div class="row row--grid">
@@ -205,31 +205,31 @@
                 <div class="col-12">
                     <div id="pagination-div">
                         @if(page != 1)
-                          <a class="pagination-link" href="/">
+                          <a class="pagination-link" href="/filter?page=1&genre={{ filter.genre }}">
                             1
                           </a>
                           &nbsp;•&nbsp;
 
                             @if(page != 2)
-                                <a class="pagination-link" href="{{ movies.getUrl(page-1) }}">
+                                <a class="pagination-link" href="{{ movies.getUrl(page-1)+"&genre="+filter.genre }}">
                                     {{ page-1 }}
                                 </a>
                             @end
                         @end
 
-                        <a class="pagination-link active" href="{{ movies.getUrl(page) }}">
+                        <a class="pagination-link active" href="{{ movies.getUrl(page)+"&genre="+filter.genre }}">
                             {{ page }}
                         </a>
 
 
                         @if(page != movies.lastPage)
                             @if(page != movies.lastPage-1)
-                                <a class="pagination-link" href="{{ movies.getUrl(page+1) }}">
+                                <a class="pagination-link" href="{{ movies.getUrl(page+1)+"&genre="+filter.genre }}">
                                     {{ parseInt(page)+1 }}
                                 </a>
                             @end
                             &nbsp;•&nbsp;
-                          <a class="pagination-link" href="/?page={{ movies.lastPage }}">
+                          <a class="pagination-link" href="/filter?page={{ movies.lastPage+"&genre="+filter.genre }}">
                             {{ movies.lastPage }}
                           </a>
                         @end

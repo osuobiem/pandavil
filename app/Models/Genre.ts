@@ -10,7 +10,7 @@ import Movie from "App/Models/Movie";
 export default class Genre extends BaseModel {
   // Relationships
   @manyToMany(() => Movie, {
-    pivotTable: "movie_genre",
+    pivotTable: "movie_genres",
   })
   public movies: ManyToMany<typeof Movie>;
 

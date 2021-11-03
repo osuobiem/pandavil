@@ -8,6 +8,8 @@ import AutoSourceChecker from "App/Jobs/AutoSourceChecker";
 import MovieUpdate from "App/Jobs/MovieUpdate";
 import LoggerService from "@ioc:Pandavil/LoggerService";
 import Log from "App/Models/Log";
+import MovieGenre from "App/Models/MovieGenre";
+import Genre from "App/Models/Genre";
 
 import Sources from "@ioc:Pandavil/SourcesService";
 
@@ -43,7 +45,7 @@ export default class SourcesController {
    */
   public async dispatchMovieUpdate() {
     try {
-      let source: any = await Source.findBy('method_name', 'netnaija');
+      let source: any = await Source.findBy("method_name", "netnaija");
 
       // Dispatch Job that should be executed every 30 min
       await Bull.add(
@@ -228,6 +230,65 @@ export default class SourcesController {
     } catch (error) {
       Logger.error(error);
       return "false";
+    }
+  }
+
+  /**
+   * Fetch available movie genres
+   */
+  public async getGenres() {
+    const movies = await Movie.all();
+    const lastIndex = movies.length - 1;
+    let genres: string = "";
+
+    // Loop through to extract genres
+    for (const i in movies) {
+      if (lastIndex != i) {
+        genres += movies[i]["genres"] + "|";
+      } else {
+        genres += movies[i]["genres"];
+      }
+    }
+
+    return [...new Set(genres.split("|"))];
+  }
+
+  /**
+   * Manage movie genres
+   */
+  public async manageGenres() {
+    try {
+      const movies = await Movie.all();
+
+      // Loop through to extract genres
+      for (const i in movies) {
+        // Get the genres of a movie as an array
+        let genreArr = movies[i]["genres"].split("|");
+
+        for (const j in genreArr) {
+          const genre = await Genre.findBy("genre", genreArr[j]);
+
+          if (genre != null) {
+            // Update movie_genre table if genre exists
+            await MovieGenre.create({
+              movieId: movies[i]["id"],
+              genreId: genre.id,
+            });
+          } else {
+            // Create new genre if genre doesnt exist
+            const newGenre = await Genre.create({
+              genre: genreArr[j],
+            });
+            // Update movie_genre table if genre exists
+            await MovieGenre.create({
+              movieId: movies[i]["id"],
+              genreId: newGenre.id,
+            });
+          }
+        }
+      }
+    } catch (error) {
+      await LoggerService.error("Genre update error", error, new Log());
     }
   }
 }
