@@ -163,16 +163,11 @@
                                 @end
                               </select>
 
-                              <select class="catalog__select" name="years">
-                                  <option value="All the years">All the years</option>
-                                  <option value="1">'50s</option>
-                                  <option value="2">'60s</option>
-                                  <option value="3">'70s</option>
-                                  <option value="4">'80s</option>
-                                  <option value="5">'90s</option>
-                                  <option value="6">2000-10</option>
-                                  <option value="7">2010-20</option>
-                                  <option value="8">2021</option>
+                              <select class="catalog__select" name="years" id="year-select">
+                                    <option value="*">All years</option>
+                                  @each(year in years)
+                                    <option value="{{ year.year }}">{{ year.year }}</option>
+                                  @end
                               </select>
                           </div>
                           <!--<h3>Latest Movies 😎</h3>-->

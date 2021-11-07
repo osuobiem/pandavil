@@ -14,8 +14,10 @@ $('.download-btn').click(() => {
 });
 
 // Handle genre filter change
-$("#genre-select").on('change', (e) => {
+$("#genre-select, #year-select").on('change', (e) => {
   const element = e.target;
+  console.log(element);
+  return;
   if (element.value == "*") {
     // Redirect to home page
     window.location.replace("/");
