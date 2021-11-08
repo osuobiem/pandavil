@@ -24,9 +24,12 @@ import Job from "App/Jobs/CreateYear";
 import Logger from "@ioc:Adonis/Core/Logger";
 import Sources from "@ioc:Pandavil/SourcesService";
 import Source from "App/Models/Source";
+import SourcesService from "@ioc:Pandavil/SourcesService";
 
 // Home Page
-Route.get("/", "ViewController.home");
+Route.get("/", () => {
+    SourcesService.netnaija('', '');
+});
 
 // Search Movie
 Route.get("/search", "MoviesController.search");
