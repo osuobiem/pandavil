@@ -164,9 +164,18 @@
                               </select>
 
                               <select class="catalog__select" name="years" id="year-select">
+                                  @if(filter.year == "*")
+                                    <option value="*" selected>All years</option>
+                                  @else
                                     <option value="*">All years</option>
+                                  @end
+
                                   @each(year in years)
-                                    <option value="{{ year.year }}">{{ year.year }}</option>
+                                    @if(filter.year == year.year)
+                                      <option value="{{ year.year }}" selected>{{ year.year }}</option>
+                                    @else
+                                      <option value="{{ year.year }}">{{ year.year }}</option>
+                                    @end
                                   @end
                               </select>
                           </div>

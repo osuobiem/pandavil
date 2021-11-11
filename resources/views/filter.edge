@@ -163,16 +163,20 @@
                                 @end
                               </select>
 
-                              <select class="catalog__select" name="years">
-                                  <option value="All the years">All the years</option>
-                                  <option value="1">'50s</option>
-                                  <option value="2">'60s</option>
-                                  <option value="3">'70s</option>
-                                  <option value="4">'80s</option>
-                                  <option value="5">'90s</option>
-                                  <option value="6">2000-10</option>
-                                  <option value="7">2010-20</option>
-                                  <option value="8">2021</option>
+                              <select class="catalog__select" name="years" id="year-select">
+                                  @if(filter.year == "*")
+                                    <option value="*" selected>All years</option>
+                                  @else
+                                    <option value="*">All years</option>
+                                  @end
+
+                                  @each(year in years)
+                                    @if(filter.year == year.year)
+                                      <option value="{{ year.year }}" selected>{{ year.year }}</option>
+                                    @else
+                                      <option value="{{ year.year }}">{{ year.year }}</option>
+                                    @end
+                                  @end
                               </select>
                               <!--<h3>Latest Movies 😎</h3>-->
                           </div>
@@ -205,31 +209,31 @@
                 <div class="col-12">
                     <div id="pagination-div">
                         @if(page != 1)
-                          <a class="pagination-link" href="/filter?page=1&genre={{ filter.genre }}">
+                          <a class="pagination-link" href="/filter?{{ urlPar }}">
                             1
                           </a>
                           &nbsp;•&nbsp;
 
                             @if(page != 2)
-                                <a class="pagination-link" href="{{ movies.getUrl(page-1)+"&genre="+filter.genre }}">
+                                <a class="pagination-link" href="{{ movies.getUrl(page-1)+"&"+urlPar }}">
                                     {{ page-1 }}
                                 </a>
                             @end
                         @end
 
-                        <a class="pagination-link active" href="{{ movies.getUrl(page)+"&genre="+filter.genre }}">
+                        <a class="pagination-link active" href="{{ movies.getUrl(page)+"&"+urlPar }}">
                             {{ page }}
                         </a>
 
 
                         @if(page != movies.lastPage)
                             @if(page != movies.lastPage-1)
-                                <a class="pagination-link" href="{{ movies.getUrl(page+1)+"&genre="+filter.genre }}">
+                                <a class="pagination-link" href="{{ movies.getUrl(page+1)+"&"+urlPar }}">
                                     {{ parseInt(page)+1 }}
                                 </a>
                             @end
                             &nbsp;•&nbsp;
-                          <a class="pagination-link" href="/filter?page={{ movies.lastPage+"&genre="+filter.genre }}">
+                          <a class="pagination-link" href="/filter?page={{ movies.lastPage+"&"+urlPar }}">
                             {{ movies.lastPage }}
                           </a>
                         @end

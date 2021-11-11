@@ -13,7 +13,7 @@ export default class ViewController {
     const movies = await Movie.query().orderBy("id", "desc").paginate(page, 18);
     const genres = await Genre.all();
     const years = await Database.from("movies").select("year").distinct("year");
-    const filter = { genre: "*", year: 2020 };
+    const filter = { genre: "*", year: "*" };
 
     movies.baseUrl("/");
 

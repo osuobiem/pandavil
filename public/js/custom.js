@@ -16,13 +16,31 @@ $('.download-btn').click(() => {
 // Handle genre filter change
 $("#genre-select, #year-select").on('change', (e) => {
   const element = e.target;
-  console.log(element);
-  return;
-  if (element.value == "*") {
+  const filterType = $(element).attr('name');
+
+  // Store filters
+  if (filterType == "years") {
+    // Set filter parameters
+    localStorage.setItem('year', element.value);
+  } else if (filterType == "genres") {
+    // Set filter parameters
+    localStorage.setItem('genre', element.value);
+  }
+
+  // Send filter request
+  if ((localStorage.getItem('year') == "*" || localStorage.getItem('year') == null) && (localStorage.getItem('genre') == "*" || localStorage.getItem('genre') == null)) {
     // Redirect to home page
     window.location.replace("/");
   } else {
-    // Redirect to page with movies of the selected genre
-    window.location.replace("/filter?genre=" + element.value);
+    if (!(localStorage.getItem('genre') == "*" || localStorage.getItem('genre') == null) && (localStorage.getItem('year') == "*" || localStorage.getItem('year') == null)) {
+      // Redirect to page with movies of the selected genre
+      window.location.replace("/filter?genre=" + localStorage.getItem('genre'));
+    } else if ((localStorage.getItem('genre') == "*" || localStorage.getItem('genre') == null) && !(localStorage.getItem('year') == "*" || localStorage.getItem('year') == null)) {
+      // Redirect to page with movies of the selected genre
+      window.location.replace("/filter?year=" + localStorage.getItem('year'));
+    } else {
+      // Redirect to page with movies of the selected genre
+      window.location.replace("/filter?genre=" + localStorage.getItem('genre') + "&year=" + localStorage.getItem('year'));
+    }
   }
 });
