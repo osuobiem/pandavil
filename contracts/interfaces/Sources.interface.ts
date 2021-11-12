@@ -18,8 +18,9 @@ export default interface SourcesInterface {
 	/**
 	 * Get movie info for IMDB
 	 * @param movie_title Movie title
+	 * @param title_year Year extracted from movie title
 	 */
-	movie_info_imdb(movie_title: string): object;
+	movie_info_imdb(movie_title: string, title_year: string): object;
 
 	/**
 	 * Ping supplied URL and return response

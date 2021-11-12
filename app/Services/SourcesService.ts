@@ -66,9 +66,10 @@ export default class SourcesService implements SourcesInterface {
 	/**
 	 * Get movie info from IMDB
 	 * @param movie_title
+	 * @param title_year
 	 * @returns Movie details
 	 */
-	public async movie_info_imdb(movie_title: string) {
+	public async movie_info_imdb(movie_title: string, title_year: string) {
 		let find_movie_url: string = "https://imdb8.p.rapidapi.com/title/find";
 
 		// Try to get movie details and catch on error
@@ -89,7 +90,7 @@ export default class SourcesService implements SourcesInterface {
 
 				let title_2 = this.clean_string(movie_title);
 
-				if (el.titleType == "movie" && title_1.includes(title_2)) {
+				if (el.titleType == "movie" && title_2.includes(title_1) && title_year == el.year) {
 					movie_id = el.id.replace("title", "").split("/").join("");
 					year = el.year;
 					duration = el.runningTimeInMinutes;
@@ -185,7 +186,8 @@ export default class SourcesService implements SourcesInterface {
 
 			if (db_movie < 1) {
 				// Get movie info
-				let movie_info: any = await this.movie_info_imdb(title.split(" (")[0]);
+				let title_year: string = title.split(' (')[1].split(')')[0];
+				let movie_info: any = await this.movie_info_imdb(title.split(" (")[0], title_year);
 
 				// Process movies that have info on IMDB
 				if (movie_info !== false) {
