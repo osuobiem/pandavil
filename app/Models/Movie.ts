@@ -32,6 +32,9 @@ export default class Movie extends BaseModel {
   public title: string;
 
   @column()
+  public queryTitle: string;
+
+  @column()
   public rating: string;
 
   @column()

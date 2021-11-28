@@ -45,7 +45,7 @@ export default class MoviesController {
   /**
    * Movie by categories (Either genres or years)
    */
-  public async filter({ request, view, response }: HttpContextContract) {
+  public async filter(request, view, response) {
     try {
       const page = request.input("page", 1);
       const filter = {
@@ -60,18 +60,18 @@ export default class MoviesController {
       }
 
       // Fetch all genres for filter
-      const genres = await Genre.all();
+      const genres = await Genre.query().orderBy('genre');
       // Extract all years for filter
       const years = await Database.from("movies")
         .select("year")
-        .distinct("year");
+        .distinct("year").orderBy('year', 'desc');;
 
       // Get filter query
       const data = await this.getFilterQuery(filter, page);
 
-      data.movies.baseUrl("/filter");
+      data.movies.baseUrl("/");
 
-      return view.render("filter", {
+      return view.render("home", {
         movies: data.movies,
         genres,
         years,
@@ -88,38 +88,34 @@ export default class MoviesController {
    * Construct query for the different filter cases
    */
   private async getFilterQuery(filter: any, page: number) {
-    let movies: any;
-    let urlPar: any;
+    let movies: any = false;
+    let urlPar: string = '';
 
-    // Construct query based on filter selected
-    if (filter.genre == "*" && filter.year != "*") {
-      movies = await Movie.query()
-        .where("year", filter.year)
-        .orderBy("id", "desc")
-        .paginate(page, 18);
-      urlPar = `year=${filter.year}`;
-    } else if (filter.genre != "*" && filter.year == "*") {
-      const genre = await Genre.findOrFail(filter.genre);
+    // Filter by Genre
+    if(filter.genre != '*') {
+      const genre = await Genre.query().where('genre', filter.genre).firstOrFail();
+      
+      // Lazy load movies of this genre
+      movies = genre.related("movies").query();
 
-      // Lazy load movies of these genre
-      movies = await genre
-        .related("movies")
-        .query()
-        .orderBy("id", "desc")
-        .paginate(page, 18);
       urlPar = `genre=${filter.genre}`;
-    } else {
-      const genre = await Genre.findOrFail(filter.genre);
-
-      // Lazy load movies of these genre
-      movies = await genre
-        .related("movies")
-        .query()
-        .where("year", filter.year)
-        .orderBy("id", "desc")
-        .paginate(page, 18);
-      urlPar = `genre=${filter.genre}&year=${filter.year}`;
     }
+
+    // Filter by Year
+    if(filter.year != '*') {
+      
+      if(!movies) {
+        movies = Movie.query();
+      }
+
+      movies = movies.where("year", filter.year);
+      urlPar += !movies ? `year=${filter.year}` : `&year=${filter.year}`;
+    }
+
+    movies = movies 
+    ? await movies.orderBy("id", "desc").paginate(page, 18) 
+    : await Movie.query().orderBy("id", "desc").paginate(page, 18);
+
     return { movies, urlPar };
   }
 }

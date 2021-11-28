@@ -18,9 +18,11 @@ export default interface SourcesInterface {
 	/**
 	 * Get movie info for IMDB
 	 * @param movie_title Movie title
+	 * @param movie_id IMDB Movie ID
 	 * @param title_year Year extracted from movie title
+	 * @param rounds Number of times function has been run
 	 */
-	movie_info_imdb(movie_title: string, title_year: string): object;
+	movie_info_imdb(movie_title: string, movie_id: string, movie_year: number, rounds: number): object;
 
 	/**
 	 * Ping supplied URL and return response
@@ -31,7 +33,19 @@ export default interface SourcesInterface {
 
 	/**
 	 * Get latest movies from Netnaija
-	 * @returns void
+	 * @returns array
 	 */
 	netnaija(source: any, Movie: any): any;
+
+	/**
+	 * Fetch and update faulty movies
+	 * @returns void
+	 */
+	 fix_movies(source: any, Movie: any): any;
+
+	 /**
+	  * Fetch movie details
+	  * @returns object
+	  */
+	 fetch_movie(movie_url: string, source: any, Movie: any, title: string): any;
 }

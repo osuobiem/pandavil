@@ -25,11 +25,14 @@ import Logger from "@ioc:Adonis/Core/Logger";
 import Sources from "@ioc:Pandavil/SourcesService";
 import Source from "App/Models/Source";
 import SourcesService from "@ioc:Pandavil/SourcesService";
+import Movie from "App/Models/Movie";
 
 // Home Page
-Route.get("/", () => {
-    SourcesService.netnaija('', '');
-});
+// Route.get("/", async () => {
+//     let source: any = await Source.findBy("method_name", "netnaija");
+//     console.log(await SourcesService.fix_movies(source, Movie));
+// });
+Route.get("/", "ViewController.home");
 
 // Search Movie
 Route.get("/search", "MoviesController.search");

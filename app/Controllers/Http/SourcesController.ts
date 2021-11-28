@@ -12,6 +12,7 @@ import MovieGenre from "App/Models/MovieGenre";
 import Genre from "App/Models/Genre";
 
 import Sources from "@ioc:Pandavil/SourcesService";
+import SourcesService from "@ioc:Pandavil/SourcesService";
 
 export default class SourcesController {
   public async index({ request, response, view }: HttpContextContract) {
@@ -48,6 +49,12 @@ export default class SourcesController {
       let source: any = await Source.findBy("method_name", "netnaija");
 
       // Dispatch Job that should be executed every 30 min
+      await LoggerService.info(
+        "Movie Job Info",
+        "Movie Update Job Dispatch Attempt",
+        new Log()
+      );
+
       await Bull.add(
         new MovieUpdate().key,
         { source },
@@ -56,12 +63,6 @@ export default class SourcesController {
             cron: "*/30 * * * *", // Every 30 Minutes
           },
         }
-      );
-
-      await LoggerService.info(
-        "Movie Job Info",
-        "MovieUpdate Job dispatched",
-        new Log()
       );
     } catch (error) {
       await LoggerService.error("Job error", error, new Log());
@@ -243,7 +244,7 @@ export default class SourcesController {
 
     // Loop through to extract genres
     for (const i in movies) {
-      if (lastIndex != i) {
+      if (lastIndex != parseInt(i)) {
         genres += movies[i]["genres"] + "|";
       } else {
         genres += movies[i]["genres"];

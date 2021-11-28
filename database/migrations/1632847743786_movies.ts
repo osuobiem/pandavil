@@ -7,6 +7,7 @@ export default class Movies extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table.text('title')
+      table.text('query_title')
       table.string('rating')
       table.string('year')
       table.string('duration')

@@ -95,7 +95,7 @@
 }
 
 .catalog__nav {
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     margin-top: -45px;
     padding: 10px 20px;
@@ -115,6 +115,14 @@
     font-weight: 500;
     z-index: 2;
     margin-left: 10px;
+}
+
+.catalog__nav .catalog__select-wrap {
+    width: auto;
+}
+
+.catalog__nav .catalog__select-wrap span:last-child {
+    margin-right: 0;
 }
 
 .header__form-btn {
