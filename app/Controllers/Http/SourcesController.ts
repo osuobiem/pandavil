@@ -45,64 +45,28 @@ export default class SourcesController {
    * Dispatches the job that updates movies on the platform
    */
   public async dispatchMovieUpdate() {
-    // try {
-    //   let source: any = await Source.findBy("method_name", "netnaija");
+    try {
+      let source: any = await Source.findBy("method_name", "netnaija");
 
-    //   // Dispatch Job that should be executed every 30 min
-    //   await LoggerService.info(
-    //     "Movie Job Info",
-    //     "Movie Update Job Dispatch Attempt",
-    //     new Log()
-    //   );
+      // Dispatch Job that should be executed every 30 min
+      await LoggerService.info(
+        "Movie Job Info",
+        "Movie Update Job Dispatch Attempt",
+        new Log()
+      );
 
-    //   await Bull.add(
-    //     new MovieUpdate().key,
-    //     { source },
-    //     {
-    //       repeat: {
-    //         cron: "*/2 * * * *", // Every 30 Minutes
-    //       },
-    //     }
-    //   );
-    // } catch (error) {
-    //   await LoggerService.error("Job error", error, new Log());
-    // }
-    let source: any = await Source.findBy("method_name", "netnaija");
-    let new_movies = await SourcesService.netnaija(source, Movie);
-
-      if (new_movies != false) {
-        for (const key in new_movies) {
-          if (Object.prototype.hasOwnProperty.call(new_movies, key)) {
-            let m = new_movies[key];
-
-            let genres = m.genres;
-            delete m.genres;
-
-            let new_movie = await new Movie().fill(m).save();
-            let movie = await Movie.findBy('movie_slug', m.movieSlug);
-
-            [...genres].forEach(async (genre, index) => {
-              let db_genre = await Genre.findBy("genre", genre);
-
-              if (!db_genre) {
-                let new_genre = await new Genre().fill({ genre }).save();
-                db_genre = await Genre.findBy("genre", genre);
-              }
-
-              await new MovieGenre().fill({ movieId: movie?.id, genreId: db_genre?.id }).save();
-            });
-
-            LoggerService.info(
-              "MovieUpdate Job Run",
-              "New Movie Updated",
-              new Log()
-            );
-          }
+      await Bull.add(
+        new MovieUpdate().key,
+        { source },
+        {
+          repeat: {
+            cron: "*/2 * * * *", // Every 30 Minutes
+          },
         }
-      }
-      else {
-        LoggerService.info("MovieUpdate Job Run", 'No Movie Updated', new Log());
-      }
+      );
+    } catch (error) {
+      await LoggerService.error("Job error", error, new Log());
+    }
   }
 
   /**
