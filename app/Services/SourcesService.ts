@@ -181,7 +181,7 @@ export default class SourcesService implements SourcesInterface {
 	 * @returns list of movies
 	 */
 	public async netnaija(source, Movie) {
-		const url: string = 'https://www.thenetnaija.com/videos/movies';//source.moviesUrl;
+		const url: string = 'https://www.thenetnaija.com/videos/movies/page/2';//source.moviesUrl;
 		const res: any = await this.ping_url(url);
 
 		let movie_list: any = [];
