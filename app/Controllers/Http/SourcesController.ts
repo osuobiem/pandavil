@@ -60,7 +60,7 @@ export default class SourcesController {
         { source },
         {
           repeat: {
-            cron: "*/2 * * * *", // Every 30 Minutes
+            cron: "*/30 * * * *", // Every 30 Minutes
           },
         }
       );
